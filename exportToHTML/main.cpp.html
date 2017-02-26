@@ -1,0 +1,210 @@
+<html>
+<head>
+<title>main.cpp</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #999999; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(128,128,128); font-style: italic; }
+.s1 { color: rgb(0,0,0); }
+.s2 { color: rgb(128,128,0); }
+.s3 { color: rgb(0,128,0); font-weight: bold; }
+.s4 { color: rgb(0,0,128); font-weight: bold; }
+.s5 { color: rgb(0,0,255); }
+</style>
+</head>
+<BODY BGCOLOR="#ffffff">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#c0c0c0" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+main.cpp</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">//Program for AVL Tree</span><span class="s1"> 
+ 
+</span><span class="s0">/* 
+ * Created by Devashish Katoriya on 26-02-2017 
+ */</span><span class="s1"> 
+ 
+</span><span class="s2">#include</span><span class="s3"> &lt;iostream&gt;</span><span class="s1"> 
+</span><span class="s2">#include</span><span class="s3"> &lt;string.h&gt;</span><span class="s1"> 
+ 
+</span><span class="s4">using namespace </span><span class="s1">std; 
+ 
+</span><span class="s2">#define </span><span class="s1">LIMIT </span><span class="s5">30</span><span class="s1"> 
+ 
+</span><span class="s0">//Function Prototypes</span><span class="s1"> 
+ 
+</span><span class="s0">//Class Declarations</span><span class="s1"> 
+</span><span class="s4">class </span><span class="s1">AVLNode 
+{ 
+</span><span class="s4">public </span><span class="s1">: 
+    </span><span class="s4">char </span><span class="s1">word[LIMIT],meaning[LIMIT]; 
+    </span><span class="s4">int </span><span class="s1">height; 
+    AVLNode *left,*right; 
+}; 
+ 
+</span><span class="s4">class </span><span class="s1">AVLTree 
+{ 
+    AVLNode *root; 
+    AVLNode *create(</span><span class="s4">char </span><span class="s1">[],</span><span class="s4">char </span><span class="s1">[]); 
+</span><span class="s4">public </span><span class="s1">: 
+    AVLTree() 
+    { 
+        root = NULL; 
+    } 
+    </span><span class="s4">inline </span><span class="s1">AVLNode *retRoot() 
+    { 
+        </span><span class="s4">return </span><span class="s1">root; 
+    } 
+    AVLNode *insert(AVLNode *,</span><span class="s4">char </span><span class="s1">[],</span><span class="s4">char </span><span class="s1">[]); 
+    AVLNode *rotate_right(AVLNode *); 
+    AVLNode *rotate_left(AVLNode *); 
+    </span><span class="s4">int </span><span class="s1">height(AVLNode *); 
+    </span><span class="s4">int </span><span class="s1">balance_factor(AVLNode *); 
+    AVLNode *RR(AVLNode *); 
+    AVLNode *RL(AVLNode *); 
+    AVLNode *LR(AVLNode *); 
+    AVLNode *LL(AVLNode *); 
+}; 
+ 
+AVLNode *AVLTree::create(</span><span class="s4">char </span><span class="s1">word[], </span><span class="s4">char </span><span class="s1">meaning[]) 
+{ 
+    AVLNode *temp; 
+    temp = </span><span class="s4">new </span><span class="s1">AVLNode; 
+    strcpy(temp-&gt;word,word); 
+    strcpy(temp-&gt;meaning,meaning); 
+    temp-&gt;height = </span><span class="s5">0</span><span class="s1">; 
+    temp-&gt;left = NULL; 
+    temp-&gt;right = NULL; 
+    </span><span class="s4">return </span><span class="s1">temp; 
+} 
+ 
+AVLNode *AVLTree::insert(AVLNode *r, </span><span class="s4">char </span><span class="s1">word[], </span><span class="s4">char </span><span class="s1">meaning[]) 
+{ 
+    </span><span class="s4">if</span><span class="s1">(r==NULL) 
+    { 
+        AVLNode *curr; 
+        curr = create(word,meaning); 
+        r = curr; 
+    } 
+    </span><span class="s4">else</span><span class="s1"> 
+    { 
+        </span><span class="s4">if</span><span class="s1">(strcmp(r-&gt;word,word)&lt;</span><span class="s5">0</span><span class="s1">) 
+        { 
+            r-&gt;left = insert(r-&gt;left,word,meaning); 
+            </span><span class="s4">if</span><span class="s1">(balance_factor(r)&gt;=</span><span class="s5">2</span><span class="s1">) 
+            { 
+                </span><span class="s4">if </span><span class="s1">(strcmp(word, r-&gt;left-&gt;word) &lt; </span><span class="s5">0</span><span class="s1">) 
+                    r = LL(r); 
+                </span><span class="s4">else</span><span class="s1"> 
+                    r = LR(r); 
+            } 
+        } 
+        </span><span class="s4">else if</span><span class="s1">(strcmp(r-&gt;word,word)&gt;</span><span class="s5">0</span><span class="s1">) 
+        { 
+            r-&gt;right = insert(r-&gt;right,word,meaning); 
+            </span><span class="s4">if</span><span class="s1">(balance_factor(r)&gt;=</span><span class="s5">2</span><span class="s1">) 
+            { 
+                </span><span class="s4">if </span><span class="s1">(strcmp(word, r-&gt;right-&gt;word) &lt; </span><span class="s5">0</span><span class="s1">) 
+                    r = RR(r); 
+                </span><span class="s4">else</span><span class="s1"> 
+                    r = RL(r); 
+            } 
+        } 
+        </span><span class="s4">else</span><span class="s1"> 
+        { 
+            cout&lt;&lt;</span><span class="s3">&quot;</span><span class="s4">\n</span><span class="s3">Entry already Exist!&quot;</span><span class="s1">; 
+        } 
+    } 
+    r-&gt;height = height(r); 
+    </span><span class="s4">return </span><span class="s1">r; 
+} 
+ 
+AVLNode *AVLTree::rotate_right(AVLNode *x) 
+{ 
+    AVLNode *y; 
+    y = x-&gt;left; 
+    x-&gt;left = y-&gt;right; 
+    y-&gt;right = x; 
+    x-&gt;height = height(x); 
+    y-&gt;height = height(y); 
+    </span><span class="s4">return </span><span class="s1">y; 
+} 
+ 
+ 
+AVLNode *AVLTree::rotate_left(AVLNode *x) 
+{ 
+    AVLNode *y; 
+    y = x-&gt;right; 
+    x-&gt;right = y-&gt;left; 
+    y-&gt;left = x; 
+    x-&gt;height = height(x); 
+    y-&gt;height = height(y); 
+    </span><span class="s4">return </span><span class="s1">y; 
+} 
+ 
+AVLNode *AVLTree::RR(AVLNode *T) 
+{ 
+    T = rotate_left(T); 
+    </span><span class="s4">return </span><span class="s1">T; 
+} 
+ 
+AVLNode *AVLTree::RL(AVLNode *T) 
+{ 
+    T-&gt;right = rotate_right(T); 
+    T = rotate_left(T); 
+    </span><span class="s4">return </span><span class="s1">T; 
+} 
+ 
+AVLNode *AVLTree::LR(AVLNode *T) 
+{ 
+    T-&gt;left = rotate_left(T); 
+    T = rotate_right(T); 
+    </span><span class="s4">return </span><span class="s1">T; 
+} 
+ 
+AVLNode *AVLTree::LL(AVLNode *T) 
+{ 
+    T = rotate_right(T); 
+    </span><span class="s4">return </span><span class="s1">T; 
+} 
+ 
+</span><span class="s4">int </span><span class="s1">AVLTree::height(AVLNode *T) 
+{ 
+    </span><span class="s4">int </span><span class="s1">hl,hr; 
+    </span><span class="s4">if</span><span class="s1">(T==NULL) 
+        </span><span class="s4">return </span><span class="s5">0</span><span class="s1">; 
+    </span><span class="s4">if</span><span class="s1">(T-&gt;left==NULL &amp;&amp; T-&gt;right==NULL) 
+        </span><span class="s4">return </span><span class="s5">0</span><span class="s1">; 
+    hl = height(T-&gt;left); 
+    hr = height(T-&gt;right); 
+    </span><span class="s4">if</span><span class="s1">(hl&gt;hr) 
+        </span><span class="s4">return </span><span class="s1">hl+</span><span class="s5">1</span><span class="s1">; 
+    </span><span class="s4">else</span><span class="s1"> 
+        </span><span class="s4">return </span><span class="s1">hr+</span><span class="s5">1</span><span class="s1">; 
+} 
+ 
+</span><span class="s4">int </span><span class="s1">AVLTree::balance_factor(AVLNode *T) 
+{ 
+    </span><span class="s4">int </span><span class="s1">lh,rh; 
+    </span><span class="s4">if</span><span class="s1">(T==NULL) 
+    { 
+        </span><span class="s4">return </span><span class="s5">0</span><span class="s1">; 
+    } 
+    </span><span class="s4">else</span><span class="s1"> 
+        lh = </span><span class="s5">1 </span><span class="s1">+ T-&gt;left-&gt;height; 
+    </span><span class="s4">if</span><span class="s1">(T-&gt;right==NULL) 
+        rh = </span><span class="s5">0</span><span class="s1">; 
+    </span><span class="s4">else</span><span class="s1"> 
+        rh = </span><span class="s5">1</span><span class="s1">+T-&gt;right-&gt;height; 
+    </span><span class="s4">return </span><span class="s1">lh-rh; 
+} 
+ 
+</span><span class="s0">//main()</span><span class="s1"> 
+</span><span class="s4">int </span><span class="s1">main() { 
+     
+     
+    </span><span class="s4">return </span><span class="s5">0</span><span class="s1">; 
+}</span></pre>
+</body>
+</html>
