@@ -70,14 +70,19 @@ AVLNode *AVLTree::create_node(char word[], char meaning[])
     return temp;
 }
 
-void AVLTree::construct()
-{
-    char word[LIMIT],meaning[LIMIT];
-    cout<<"\nEnter new Word \t: ";
-    cin>>word;
-    cout<<"Enter meaning \t: ";
-    cin>>meaning;
-    root = insert(retRoot(),word,meaning);
+void AVLTree::construct() {
+    char word[LIMIT], meaning[LIMIT];
+    cout << "\nEnter new Entries (# to Stop) :-";
+    while (1)
+    {
+        cout << "\n\nEnter new Word \t: ";
+        cin >> word;
+        if(stringCompare(word,"#")==0)              //Please Ignore this Warning
+            break;
+        cout << "Enter meaning \t: ";
+        cin >> meaning;
+        root = insert(retRoot(), word, meaning);
+    }
 }
 
 AVLNode *AVLTree::insert(AVLNode *r, char word[], char meaning[])
@@ -87,7 +92,7 @@ AVLNode *AVLTree::insert(AVLNode *r, char word[], char meaning[])
         AVLNode *curr;
         curr = create_node(word,meaning);
         r = curr;
-        cout<<"\nWord Inserted Successfully!";
+        cout<<"Word Inserted Successfully!";
     }
     else
     {
@@ -152,14 +157,14 @@ AVLNode *AVLTree::RR(AVLNode *T)
 
 AVLNode *AVLTree::RL(AVLNode *T)
 {
-    T->right = rotate_right(T);
+    T->right = rotate_right(T->right);
     T = rotate_left(T);
     return T;
 }
 
 AVLNode *AVLTree::LR(AVLNode *T)
 {
-    T->left = rotate_left(T);
+    T->left = rotate_left(T->left);
     T = rotate_right(T);
     return T;
 }
