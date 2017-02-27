@@ -1,4 +1,4 @@
-//Program for AVL Tree
+//Program to implement Dictionary using AVL Tree.
 
 /*
  * Created by Devashish Katoriya on 26-02-2017
@@ -12,6 +12,7 @@ using namespace std;
 #define LIMIT 30
 
 //Function Prototypes
+int stringCompare(char [],char []);
 
 //Class Declarations
 class AVLNode
@@ -90,23 +91,23 @@ AVLNode *AVLTree::insert(AVLNode *r, char word[], char meaning[])
     }
     else
     {
-        if(strcmp(r->word,word)<0)
+        if(stringCompare(word,r->word)<0)
         {
             r->left = insert(r->left,word,meaning);
-            if(balance_factor(r)>=2)
+            if(balance_factor(r)>=2 || balance_factor(r)<=-2)
             {
-                if (strcmp(word, r->left->word) < 0)
+                if (stringCompare(word,r->left->word) < 0)
                     r = LL(r);
                 else
                     r = LR(r);
             }
         }
-        else if(strcmp(r->word,word)>0)
+        else if(stringCompare(word,r->word)>0)
         {
             r->right = insert(r->right,word,meaning);
-            if(balance_factor(r)>=2)
+            if(balance_factor(r)>=2 || balance_factor(r)<=-2)
             {
-                if (strcmp(word, r->right->word) < 0)
+                if (stringCompare(word, r->right->word) > 0)
                     r = RR(r);
                 else
                     r = RL(r);
@@ -131,7 +132,6 @@ AVLNode *AVLTree::rotate_right(AVLNode *x)
     y->height = height(y);
     return y;
 }
-
 
 AVLNode *AVLTree::rotate_left(AVLNode *x)
 {
@@ -176,7 +176,7 @@ int AVLTree::height(AVLNode *T)
     if(T==NULL)
         return 0;
     if(T->left==NULL && T->right==NULL)
-        return 0;
+        return 1;
     hl = height(T->left);
     hr = height(T->right);
     if(hl>hr)
@@ -187,18 +187,12 @@ int AVLTree::height(AVLNode *T)
 
 int AVLTree::balance_factor(AVLNode *T)
 {
-    int lh,rh;
     if(T==NULL)
     {
         return 0;
     }
     else
-        lh = 1 + T->left->height;
-    if(T->right==NULL)
-        rh = 0;
-    else
-        rh = 1+T->right->height;
-    return lh-rh;
+        return height(T->left)-height(T->right);
 }
 
 void AVLTree::inOrder(AVLNode *s1)								//in order()
@@ -216,6 +210,7 @@ void AVLTree::search(char key[])
     if(isEmpty())
     {
         cout<<"\nDictionary is Empty!";
+        return;
     }
     temp = root;
     while(temp!=NULL)
@@ -244,7 +239,7 @@ int main() {
     AVLTree obj;
     int ch;
     char choice,word[LIMIT];
-    cout<<"\nProgram to create Expression Tree.";
+    cout<<"\nProgram to implement Dictionary using AVL Tree.";
     do
     {
         ch = 0;
@@ -258,17 +253,21 @@ int main() {
         cout<<"\n 6 for Root Node";
         cout<<"\n 7 for Balance Factor of Root";
         cout<<"\n -1 to Clear whole Tree";
-        cout<<"\n 0 to  Quit";
+        cout<<"\n  0 to Quit";
         cout<<"\nEnter your choice : ";
         cin>>ch;
         cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n";
-        switch(ch)
-        {
+        switch(ch) {
             case 1 :
                 obj.construct();
                 break;
-            case 2 : cout<<"\nIn-Order Traversal is ";
+            case 2 :
+                if (!obj.isEmpty()) {
+                cout << "\nIn-Order Traversal is ";
                 obj.inOrder(obj.retRoot());
+                }
+                else
+                    cout<<"\nDictionary is Empty!";
                 break;
             case 3 :
                 cout<<"\nEnter Word : ";
@@ -276,10 +275,10 @@ int main() {
                 obj.search(word);
                 break;
             case 4 :
-                cout<<"\nHeight of Tree is "<<obj.height(obj.retRoot())+1;
+                cout<<"\nHeight of Tree is "<<obj.height(obj.retRoot());
                 break;
             case 5 :
-                cout<<"\nDepth of Tree is "<<obj.height(obj.retRoot())+1;
+                cout<<"\nDepth of Tree is "<<obj.height(obj.retRoot());
                 break;
             case 6 : if(!obj.isEmpty())
                     cout<<"\nRoot Node is "<<obj.retRoot()->word;
@@ -316,6 +315,32 @@ int main() {
     
     cout<<"\nThank you for using this program :) \n\n";
     return 0;
+}
+
+//Various Functions
+int stringCompare(char a[],char b[])                                        //Compares two strings
+{
+    int i,len=0,len2=0;
+    for(i=0;a[i]!='\0';i++)
+        len++;
+    for(i=0;b[i]!='\0';i++)
+        len2++;
+    if(len>len2)
+        return 1;               //a>b
+    else if(len<len2)
+        return -1;              //a<b
+    for(i=0;i<len;i++)
+    {
+        if(a[i]<b[i])
+        {
+            return -1;          //a<b
+        }
+        else if(a[i]>b[i])
+        {
+            return 1;           //a>b
+        }
+    }
+    return 0;                   //a==b
 }
 
 /* OUTPUT
