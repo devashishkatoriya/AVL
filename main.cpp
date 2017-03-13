@@ -77,7 +77,7 @@ void AVLTree::construct() {
     {
         cout << "\n\nEnter new Word \t: ";
         cin >> word;
-        if(stringCompare(word,"#")==0)              //Please Ignore this Warning
+        if(stringCompare(word,"#")==0) //Please Ignore this Warning :)
             break;
         cout << "Enter meaning \t: ";
         cin >> meaning;
