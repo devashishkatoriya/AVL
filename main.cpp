@@ -220,11 +220,11 @@ void AVLTree::search(char key[])
     temp = root;
     while(temp!=NULL)
     {
-        if(strcmp(temp->word,key)>0)
+        if(stringCompare(temp->word,key)>0)
         {
             temp  = temp->left;
         }
-        else if(strcmp(temp->word,key)<0)
+        else if(stringCompare(temp->word,key)<0)
         {
             temp = temp->right;
         }
@@ -232,11 +232,10 @@ void AVLTree::search(char key[])
         {
             cout<<"\nWord   \t: "<<temp->word;
             cout<<"\nMeaning \t: "<<temp->meaning;
-            break;
+            return;
         }
     }
-    if(temp == NULL)
-        cout<<"\nWord NOT found!";
+    cout<<"\nWord NOT found!";
 }
 
 //main()
