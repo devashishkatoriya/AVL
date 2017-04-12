@@ -34,7 +34,7 @@ class AVLTree
     AVLNode *RL(AVLNode *);
     AVLNode *LR(AVLNode *);
     AVLNode *LL(AVLNode *);
-    AVLNode *delete_node(AVLNode *);
+    AVLNode *delete_node(AVLNode *,char []);
 public :
     AVLTree()
     {
@@ -248,130 +248,78 @@ void AVLTree::del(char key[])
         cout<<"\nDictionary is Empty!";
         return;
     }
-    AVLNode *temp,*parent;
-    char flag;
-    temp = root;
-    parent = root;
-    flag = 'S';
-    while(temp!=NULL)
-    {
-        if(stringCompare(temp->word,key)>0)
-        {
-            parent = temp;
-            flag = 'L';
-            temp  = temp->left;
-        }
-        else if(stringCompare(temp->word,key)<0)
-        {
-            parent = temp;
-            flag = 'R';
-            temp = temp->right;
-        }
-        else
-        {
-            if(flag == 'L')
-            {
-                parent->left = delete_node(temp);
-                parent->height = height(parent);
-                if(balance_factor(parent)>=2)
-                {
-                    parent = LL(parent);
-                }
-                else if(balance_factor(parent)<=-2)
-                {
-                    parent = RR(parent);
-                }
-            }
-            else if(flag == 'R')
-            {
-                parent->right = delete_node(temp);
-                parent->height = height(parent);
-                if(balance_factor(parent)>=2)
-                {
-                    parent = LL(parent);
-                }
-                else if(balance_factor(parent)<=-2)
-                {
-                    parent = RR(parent);
-                }
-            }
-            else
-            {
-                root = delete_node(temp);
-                if(root!=NULL)
-                {
-                    root->height = height(root);
-                    if (balance_factor(root) >= 2)
-                    {
-                        root = LL(root);
-                    }
-                    else if (balance_factor(root) <= -2)
-                    {
-                        root = RR(root);
-                    }
-                }
-            }
-            cout<<"\nWord Deleted Successfully!";
-            return;
-        }
-    }
-    cout<<"\nWord NOT found!";
+    root = delete_node(root,key);
+    cout<<"\nWord Deleted Successfully!";
 }
 
-AVLNode *AVLTree::delete_node(AVLNode *r)
+AVLNode *AVLTree::delete_node(AVLNode *r,char key[])
 {
-    //if root == NULL then
-    if(r==NULL)
-    {
+    // STEP 1: PERFORM STANDARD BST DELETE
+    if (r == NULL)
         return NULL;
-    }
     
-    //leaf node
-    else if(r->left==NULL && r->right==NULL)
-    {
-        delete r;
-        return NULL;
-    }
-        
-    //node with left child only
-    else if(r->left!=NULL && r->right==NULL)
-    {
-        return r->left;
-    }
-    //node with right child only
-    else if(r->left==NULL && r->right!=NULL)
-    {
-        return r->right;
-    }
-        
-    //node with two children
+    if (stringCompare(key,r->word)<0)
+        r->left = delete_node(r->left, key);
+    else if(stringCompare(key,r->word)>0)
+        r->right = delete_node(r->right, key);
     else
     {
-        AVLNode *temp;
-        //find the minimum valued node in right subtree
-        temp = r->right;
-        while(temp->left!=NULL)
-        {
-            temp = temp->left;
-        }
-        //copy that to current node
-        strcpy(r->word,temp->word);
-        strcpy(r->meaning,temp->meaning);
+        // node with no child
+        if(r->left==NULL && r->right==NULL)
+            r = NULL;
         
-        //delete the in-order successor
-        r->right = delete_node(temp);
-        
-        r->height = height(r);
-        if(balance_factor(r)>=2)
+        //node with exactly one child
+        else if(r->left==NULL && r->right!=NULL)
         {
-            r = LL(r);
+            r = r->right;
         }
-        else if(balance_factor(r)<=-2)
+        else if(r->left!=NULL && r->right==NULL)
         {
-            r = RR(r);
+            r = r->left;
         }
-        return r;
+        //node with two children
+        else
+        {
+            AVLNode *temp;
+            //find the minimum valued node in right subtree
+            temp = r->right;
+            while(temp->left!=NULL)
+            {
+                temp = temp->left;
+            }
+            //copy that to current node
+            strcpy(r->word,temp->word);
+            strcpy(r->meaning,temp->meaning);
+    
+            //delete the in-order successor
+            r->right = delete_node(temp,temp->word);
+        }
     }
+    
+    if(r==NULL)
+        return NULL;
+    
+    // STEP 2: UPDATE HEIGHT OF THE CURRENT NODE
+    r->height = height(r);
+    
+    // STEP 3: GET THE BALANCE FACTOR OF THIS NODE
+    int balance = balance_factor(r);
+    
+    // If this node becomes unbalanced, then there are 4 cases
+    // Left Left Case
+    if (balance >= 2 && balance_factor(r->left) >= 0)
+        return LL(r);
+    // Left Right Case
+    else if (balance >= 2 && balance_factor(r->left) < 0)
+        return LR(r);
+    // Right Right Case
+    else if (balance <= -2 && balance_factor(r->right) <= 0)
+        return RR(r);
+    // Right Left Case
+    else if (balance <= -2 && balance_factor(r->right) > 0)
+        return RL(r);
+    
+    return r;
 }
 
 //main()
